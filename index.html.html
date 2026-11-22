@@ -218,7 +218,7 @@ falha:{tag:"nova",t:"Falha na abertura",n:"Hoje, se a abertura falha, o cliente 
 operador:{tag:"nova",t:"Operador a caminho",n:"Recuperação assistida: o operador volante vai até a vaga e abre o carro pelo Pátio 360. O padrão é de até 15 minutos entre o problema e o carro liberado.",
  b:()=>`<div class="ttl">Um operador está indo até você</div><div class="card soft" style="text-align:center"><div class="sm">CHEGA EM</div><div style="font-size:42px;font-weight:700;color:var(--pd)">~8 min</div><div class="txt">Fique na vaga ${CARS[S.car].vaga}. Ele abre o carro pelo sistema do pátio.</div></div>`,
  f:()=>`<button class="btn" data-act="compOp" ${go("aberto")}>Simular: carro aberto</button><span class="lnk">Falar com a central</span>`},
-aberto:{tag:"atual",t:"Carro e contrato abertos",n:"Final igual ao app atual. Quando há espera ou a promessa foi quebrada, o app já mostra a compensação, calculada pela hora do “Cheguei” e pela regra.",
+aberto:{tag:"atual",t:"Carro e contrato abertos",n:"Final igual ao app atual. Quando há espera ou a promessa foi quebrada, o app mostra a compensação, calculada pela hora do “Cheguei” e pela regra. Uma espera de até 15 minutos fica dentro do padrão: o app só pede desculpas.",
  b:()=>`<img class="ph" src="${IMG[S.car]}" alt="" style="margin-top:6px"><div class="ttl" style="margin-top:12px">Carro e contrato abertos!</div><p class="txt">Agora é só pegar a chave e o documento no porta-luvas. Uma cópia do contrato foi enviada para o seu e-mail.</p>${compCard()}`,
  f:()=>`<button class="btn" data-restart>Finalizar</button>`},
 fim:{tag:"nova",t:"Atendimento concluído",n:"Mesmo no último recurso, o cliente sai com o carro e com a compensação aplicada pela regra, sem depender da decisão do atendente.",
@@ -228,7 +228,7 @@ fim:{tag:"nova",t:"Atendimento concluído",n:"Mesmo no último recurso, o client
 function compCard(){
  const c=S.comp||(S.car=="up"?"up":null);
  const M={up:["O upgrade é a sua compensação","Você recebeu um carro de grupo superior, sem custo adicional."],
-  op:["Compensação aplicada: nível 1","Sua espera ficou entre 15 e 30 minutos. Creditamos pontos de fidelidade na sua conta."],
+  op:["Pedimos desculpas","Sua espera ficou dentro do padrão de até 15 minutos."],
   espera:["Compensação aplicada: nível 1","Sua espera passou do horário reservado em 15 a 30 minutos. Creditamos pontos de fidelidade."],
   balcao:["Compensação aplicada: nível 2","Você precisou ir ao balcão. Creditamos um desconto para a sua próxima locação."]};
  if(!c||!M[c]) return "";
@@ -242,7 +242,7 @@ function render(){
  clearTimeout(timer);
  const id=S.hist[S.hist.length-1], s=SCR[id], tg=TAGN[s.tag], st=STEP[id];
  const top=id=="inicio"?"":`<div class="nav">${S.hist.length>1?'<span class="bk" data-back>‹</span>':''}Retirada digital${s.ob?`<span class="sk" ${go("identidade")}>Pular</span>`:""}</div>`;
- const steps=st?`<div class="steps">${[1,2,3,4,5].map(i=>`<i class="${i<=st?"on":""}"></i>`).join("")}</div><div class="stl">Etapa ${st} de 5 · ${STN[st]}</div>`:"";
+ const steps=st?`<div class="steps">${[1,2,3,4,5].map(i=>`<i class="${i<=st?"on":""}"></i>`).join("")}</div><div class="stl">Etapa ${st} de 5 · ${(id=="mudou"||id=="caminho")?"A caminho":STN[st]}</div>`:"";
  document.getElementById("scr").innerHTML=`<div class="sb"><span>9:41</span><span>●●● ▮</span></div>${top}${steps}${s.tag!="atual"?`<span class="new">${tg[0].toUpperCase()}</span>`:""}<div class="ct">${s.b()}</div><div class="ft">${s.f()}</div>`;
  document.getElementById("note").innerHTML=`<span class="tag ${tg[1]}">${tg[0]}</span><h2>${s.t}</h2><p>${s.n||OBN}</p>`;
  document.getElementById("prog").textContent=`Cenário ${S.sc} · tela ${S.hist.length}`;
